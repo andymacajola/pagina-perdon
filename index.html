@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Nos perdonas?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .yes-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .yes-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .no-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .no-btn:hover {
+            background-color: #da190b;
+            transform: scale(1.05);
+        }
+
+        .message {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-top: 30px;
+            animation: slideUp 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes moveAway {
+            0% {
+                position: relative;
+                top: 0;
+                left: 0;
+            }
+            50% {
+                position: relative;
+                top: -10px;
+                left: -100px;
+            }
+            100% {
+                position: relative;
+                top: 0;
+                left: -200px;
+            }
+        }
+
+        .no-btn.escape {
+            animation: moveAway 0.6s ease-in-out;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            font-size: 1.8em;
+            color: #4CAF50;
+            margin-top: 30px;
+            animation: slideUp 0.6s ease-in;
+        }
+
+        .final-message {
+            font-size: 1.3em;
+            color: #764ba2;
+            margin-top: 20px;
+            animation: slideUp 0.8s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">¿Nos perdonas?</h1>
+        
+        <div id="buttonsDiv" class="buttons-container">
+            <button class="yes-btn" id="yesBtn">Sí</button>
+            <button class="no-btn" id="noBtn">No</button>
+        </div>
+
+        <div id="messageDiv" class="hidden"></div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const buttonsDiv = document.getElementById('buttonsDiv');
+        const messageDiv = document.getElementById('messageDiv');
+        const title = document.getElementById('title');
+
+        let noClickCount = 0;
+
+        yesBtn.addEventListener('click', function() {
+            buttonsDiv.classList.add('hidden');
+            title.classList.add('hidden');
+            
+            messageDiv.classList.remove('hidden');
+            messageDiv.innerHTML = '<div class="success-message">¡Gracias chiquito! 💕</div>';
+            
+            setTimeout(() => {
+                messageDiv.innerHTML += '<div class="final-message">El viernes te invito a una fiesta 🎉</div>';
+            }, 1000);
+        });
+
+        noBtn.addEventListener('click', function() {
+            noClickCount++;
+            
+            if (noClickCount === 1) {
+                noBtn.classList.add('escape');
+                setTimeout(() => {
+                    noBtn.classList.remove('escape');
+                }, 600);
+            } else if (noClickCount === 2) {
+                noBtn.style.position = 'absolute';
+                noBtn.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+                noBtn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            } else if (noClickCount >= 3) {
+                noBtn.disabled = true;
+                noBtn.style.opacity = '0.5';
+                noBtn.style.cursor = 'not-allowed';
+            }
+        });
+    </script>
+</body>
+</html>
