@@ -28,13 +28,13 @@
             text-align: center;
             max-width: 500px;
             width: 90%;
+            position: relative;
         }
 
         h1 {
             color: #333;
             font-size: 2.5em;
             margin-bottom: 30px;
-            animation: fadeIn 0.6s ease-in;
         }
 
         .buttons-container {
@@ -42,6 +42,7 @@
             gap: 20px;
             justify-content: center;
             margin-top: 40px;
+            position: relative;
         }
 
         button {
@@ -50,8 +51,8 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: bold;
+            transition: all 0.3s ease;
         }
 
         .yes-btn {
@@ -67,80 +68,32 @@
         .no-btn {
             background-color: #f44336;
             color: white;
+            position: relative;
         }
 
         .no-btn:hover {
             background-color: #da190b;
-            transform: scale(1.05);
         }
 
-        .message {
-            font-size: 1.5em;
-            color: #667eea;
-            margin-top: 30px;
-            animation: slideUp 0.6s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes moveAway {
-            0% {
-                position: relative;
-                top: 0;
-                left: 0;
-            }
-            50% {
-                position: relative;
-                top: -10px;
-                left: -100px;
-            }
-            100% {
-                position: relative;
-                top: 0;
-                left: -200px;
-            }
-        }
-
-        .no-btn.escape {
-            animation: moveAway 0.6s ease-in-out;
+        .no-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         .success-message {
-            font-size: 1.8em;
+            font-size: 2em;
             color: #4CAF50;
             margin-top: 30px;
-            animation: slideUp 0.6s ease-in;
         }
 
         .final-message {
-            font-size: 1.3em;
+            font-size: 1.4em;
             color: #764ba2;
             margin-top: 20px;
-            animation: slideUp 0.8s ease-in;
         }
     </style>
 </head>
@@ -153,7 +106,7 @@
             <button class="no-btn" id="noBtn">No</button>
         </div>
 
-        <div id="messageDiv" class="hidden"></div>
+        <div id="messageDiv"></div>
     </div>
 
     <script>
@@ -164,12 +117,12 @@
         const title = document.getElementById('title');
 
         let noClickCount = 0;
+        let escapeActive = false;
 
         yesBtn.addEventListener('click', function() {
             buttonsDiv.classList.add('hidden');
             title.classList.add('hidden');
             
-            messageDiv.classList.remove('hidden');
             messageDiv.innerHTML = '<div class="success-message">¡Gracias chiquito! 💕</div>';
             
             setTimeout(() => {
@@ -177,22 +130,39 @@
             }, 1000);
         });
 
-        noBtn.addEventListener('click', function() {
+        noBtn.addEventListener('click', function(e) {
+            if (noBtn.disabled) return;
+            
             noClickCount++;
             
             if (noClickCount === 1) {
-                noBtn.classList.add('escape');
-                setTimeout(() => {
-                    noBtn.classList.remove('escape');
-                }, 600);
-            } else if (noClickCount === 2) {
+                // Primera vez: se mueve hacia la izquierda
+                escapeActive = true;
                 noBtn.style.position = 'absolute';
-                noBtn.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+                noBtn.style.transition = 'all 0.6s ease-in-out';
+                noBtn.style.transform = 'translateX(-250px)';
+                
+                setTimeout(() => {
+                    noBtn.style.transform = 'translateX(0)';
+                    escapeActive = false;
+                }, 700);
+            } 
+            else if (noClickCount === 2) {
+                // Segunda vez: se mueve a posición aleatoria
+                noBtn.style.position = 'fixed';
                 noBtn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
-            } else if (noClickCount >= 3) {
+                noBtn.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+            }
+            else if (noClickCount === 3) {
+                // Tercera vez: otra posición aleatoria
+                noBtn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+                noBtn.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+            }
+            else {
+                // Después: se desactiva
                 noBtn.disabled = true;
                 noBtn.style.opacity = '0.5';
-                noBtn.style.cursor = 'not-allowed';
+                noBtn.textContent = 'No puedes';
             }
         });
     </script>
